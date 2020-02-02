@@ -11,6 +11,10 @@
 ## Testing all the things
 - run `yarn ci`
 
+## Committing code
+The project uses [Conventional Commit Messages](https://www.conventionalcommits.org/en/v1.0.0/#summary) and your commits
+will be validated
+
 ## Stuff
 
 - The project uses [yarn workspaces](https://yarnpkg.com/lang/en/docs/workspaces/)
