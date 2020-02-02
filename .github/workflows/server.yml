@@ -1,0 +1,60 @@
+name: Test and Build the thing
+
+on:
+  push:
+    tags:
+      - v*
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup Node
+      uses: actions/setup-node@v1
+      with:
+        node-version: '13.3.0'
+    - uses: actions/cache@v1
+      id: main-cache
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-yarn-main-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+    - name: Install dependencies
+      if: steps.main-cache.outputs.cache-hit != 'true'
+      run: yarn install --pure-lockfile
+    - name: Run tests
+      env:
+        SENTRY_ENABLED: true
+        SENTRY_ENVIRONMENT: production
+      run: yarn ci
+    - uses: actions/cache@v1
+      id: pulumi-cache
+      with:
+        path: deployment/node_modules
+        key: ${{ runner.os }}-yarn-pulumi-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-pulumi-yarn-
+    - name: Install dependencies
+      if: steps.pulumi-cache.outputs.cache-hit != 'true'
+      working-directory: deployment
+      run: yarn install --pure-lockfile
+    - uses: docker://pulumi/actions
+      with:
+        entrypoint: ./scripts/pulumi-action
+        args: up
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+        PULUMI_CI: up
+    - name: Slack Notification
+      uses: rtCamp/action-slack-notify@v2.0.0
+      env:
+        SLACK_CHANNEL: devops
+        SLACK_COLOR: '#602080'
+        SLACK_ICON: https://getzoe.com/assets/favicon-48x48.png
+        SLACK_MESSAGE: 'New version deployed :rocket: - https://getzoe.net'
+        SLACK_TITLE: Zoe Deployment $GITHUB_REF
+        SLACK_USERNAME: github-actions
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}

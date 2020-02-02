@@ -1,0 +1,56 @@
+name: Verify PR
+
+on: [pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '13.3.0'
+      - uses: actions/cache@v1
+        id: yarn-internal-cache
+        with:
+          path: .cache
+          key: ${{ runner.os }}-yarn-internal-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-internal
+      - uses: actions/cache@v1
+        id: main-cache
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-yarn-main-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - uses: actions/cache@v1
+        id: ui-cache
+        with:
+          path: packages/ui/node_modules
+          key: ${{ runner.os }}-yarn-ui-${{ hashFiles('packages/ui/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install dependencies
+        if: steps.main-cache.outputs.cache-hit != 'true'
+        run: yarn --cache-folder .cache/yarn install --pure-lockfile
+
+      - uses: actions/cache@v1
+        id: api-cache
+        with:
+          path: packages/api/node_modules
+          key: ${{ runner.os }}-yarn-ui-${{ hashFiles('packages/api/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install ui dependencies
+        if: steps.ui-cache.outputs.cache-hit != 'true'
+        run: yarn --cache-folder .cache/yarn ui install --pure-lockfile
+      - name: Install api dependencies
+        if: steps.api-cache.outputs.cache-hit != 'true'
+        run: yarn --cache-folder .cache/yarn ui install --pure-lockfile
+      - name: Run tests
+        run: yarn --cache-folder .cache/yarn ci:dev
+      - uses: actions/upload-artifact@v1
+        with:
+          name: ui
+          path: packages/ui/dist

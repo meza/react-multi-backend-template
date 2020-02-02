@@ -1,0 +1,8 @@
+@import '../../stylesheets/base/colours';
+
+.App {
+  background-color: $primaryBackgroundColour;
+  color: $primaryColour;
+  height: 100%;
+  width: 100%;
+}

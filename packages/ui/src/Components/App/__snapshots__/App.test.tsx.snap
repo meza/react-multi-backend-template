@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`The app component it renders consistently 1`] = `
+<div
+  className="App"
+>
+  Hello World
+</div>
+`;

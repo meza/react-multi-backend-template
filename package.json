@@ -1,0 +1,74 @@
+{
+  "name": "@meza/react-template",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "ui": "yarn workspace @meza/react-template-ui",
+    "api": "yarn workspace @meza/react-template-api",
+    "start": "concurrently \"yarn api start\" \"yarn ui start\"",
+    "ci": "yarn workspaces run ci",
+    "ci:dev": "yarn workspaces run ci:dev",
+    "clean": "yarn workspaces run clean",
+    "clean:all": "yarn workspaces run clean:all && rm -rf node_modules .cache && rm -rf deployment/node_modules",
+    "lint": "yarn workspaces run lint",
+    "lint:fix": "yarn workspaces run lint:fix",
+    "test": "yarn workspaces run test",
+    "todo": "scripts/bumbailiff.sh",
+    "report": "yarn workspaces run report",
+    "release": "standard-version"
+  },
+  "dependencies": {
+    "concurrently": "^5.1.0",
+    "core-js": "^3.4.7",
+    "husky": "^4.2.1",
+    "install-deps-postmerge": "^1.0.5",
+    "yarn": "^1.19.0"
+  },
+  "standard-version": {
+    "bumpFiles": [
+      {
+        "filename": "package.json",
+        "type": "json"
+      },
+      {
+        "filename": "packages/api/package.json",
+        "type": "json"
+      },
+      {
+        "filename": "packages/ui/package.json",
+        "type": "json"
+      },
+      {
+        "filename": "deployment/package.json",
+        "type": "json"
+      }
+    ],
+    "packageFiles": [
+      {
+        "filename": "package.json",
+        "type": "json"
+      }
+    ]
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "post-merge": "install-deps-postmerge",
+      "pre-push": "yarn todo && yarn ci",
+      "pre-commit": "yarn lint",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^8.3.4",
+    "@commitlint/config-conventional": "^8.3.4",
+    "standard-version": "^7.1.0"
+  }
+}

@@ -1,0 +1,11 @@
+@import 'src/stylesheets/base/all';
+
+body,
+html {
+  background-color: $primaryBackgroundColour;
+  font-family: 'Montserrat Subrayada', sans-serif;
+  font-size: $font-size-standard;
+  height: 100vh;
+  margin: 0;
+  width: 100vw;
+}

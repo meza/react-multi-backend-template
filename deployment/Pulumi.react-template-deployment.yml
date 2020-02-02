@@ -1,0 +1,4 @@
+config:
+  aws:region: us-east-1
+  react-template:certArt: setme
+  react-template:domain: test.com

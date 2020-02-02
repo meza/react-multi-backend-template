@@ -1,0 +1,38 @@
+{
+  "include": [
+    "**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.test.ts"
+  ],
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "esnext",
+    "lib": [
+      "dom",
+      "esnext"
+    ],
+    "typeRoots": [
+      "@types",
+      "node_modules/@types"
+    ],
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noImplicitAny": false,
+    "strictNullChecks": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "noUnusedLocals": true,
+    "resolveJsonModule": true,
+    "downlevelIteration": true,
+    "skipLibCheck": true,
+    "preserveSymlinks": true,
+    "noEmit": true,
+    "outDir": "bin"
+  }
+}

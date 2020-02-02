@@ -1,0 +1,3 @@
+name: react-template
+runtime: nodejs
+aws:region: us-east-1

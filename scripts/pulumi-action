@@ -1,0 +1,6 @@
+#!/bin/sh
+
+(
+  cd deployment || exit
+  /usr/bin/pulumi-action up
+)
